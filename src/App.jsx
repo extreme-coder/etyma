@@ -86,7 +86,7 @@ function App() {
               width: '100%',
               border: '1px solid #e5e7eb',
               padding: '16px',
-              fontSize: '0.875rem',
+              fontSize: '16px',
               fontWeight: '300',
               letterSpacing: '0.05em',
               resize: 'none',
