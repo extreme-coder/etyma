@@ -1,8 +1,8 @@
 # Etyma
 
-**Where Language Comes From**
+**Illuminating Word Origins**
 
-A beautiful, minimalist web app that reveals the etymological origins of English words by coloring them according to their linguistic heritage.
+A minimalist web app that reveals the etymological origins of English words by coloring them according to their linguistic heritage.
 
 ## Features
 

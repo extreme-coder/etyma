@@ -72,7 +72,7 @@ function App() {
         <div ref={inputSectionRef} style={{ textAlign: 'center', marginBottom: '48px' }}>
           <h1 style={{ fontSize: '2.5rem', fontWeight: '300', letterSpacing: '0.1em', color: 'black', marginBottom: '8px' }}>ETYMA</h1>
           <p style={{ color: '#6b7280', fontSize: '0.75rem', fontWeight: '300', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
-            Where Language Comes From
+            Illuminating Word Origins
           </p>
         </div>
         
