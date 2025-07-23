@@ -137,7 +137,7 @@ function App() {
 
         {!networkError && (
           <LanguageLegend 
-            activeLanguages={activeLanguages}
+            originStats={originStats}
             showResults={showResults}
           />
         )}

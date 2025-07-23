@@ -19,7 +19,7 @@ const EtymologyChart = ({ originStats, showResults }) => {
         justifyContent: 'center',
         alignItems: 'center'
       }}>
-        <svg width="200" height="200" viewBox="0 0 200 200">
+        <svg width="240" height="240" viewBox="0 0 240 240">
           {(() => {
             let currentAngle = 0
             return originStats.map((stat, index) => {
@@ -31,21 +31,31 @@ const EtymologyChart = ({ originStats, showResults }) => {
               const startRad = (startAngle * Math.PI) / 180
               const endRad = (endAngle * Math.PI) / 180
               
-              // Calculate arc path
-              const x1 = 100 + 80 * Math.cos(startRad)
-              const y1 = 100 + 80 * Math.sin(startRad)
-              const x2 = 100 + 80 * Math.cos(endRad)
-              const y2 = 100 + 80 * Math.sin(endRad)
+              // Calculate arc path (centered at 120, 120 in the 240x240 viewBox)
+              const centerX = 120
+              const centerY = 120
+              const radius = 80
+              
+              const x1 = centerX + radius * Math.cos(startRad)
+              const y1 = centerY + radius * Math.sin(startRad)
+              const x2 = centerX + radius * Math.cos(endRad)
+              const y2 = centerY + radius * Math.sin(endRad)
               
               const largeArc = stat.angle > 180 ? 1 : 0
               
               const pathData = [
-                `M 100 100`,
+                `M ${centerX} ${centerY}`,
                 `L ${x1} ${y1}`,
-                `A 80 80 0 ${largeArc} 1 ${x2} ${y2}`,
+                `A ${radius} ${radius} 0 ${largeArc} 1 ${x2} ${y2}`,
                 `Z`
               ].join(' ')
               
+              // Calculate text position (outside the chart)
+              const midAngle = (startAngle + endAngle) / 2
+              const midRad = (midAngle * Math.PI) / 180
+              const textX = centerX + 110 * Math.cos(midRad)
+              const textY = centerY + 110 * Math.sin(midRad)
+
               return (
                 <g key={index}>
                   <path
@@ -54,6 +64,20 @@ const EtymologyChart = ({ originStats, showResults }) => {
                     stroke="none"
                     className="pie-slice"
                   />
+                  {stat.angle > 15 && ( // Only show percentage if slice is large enough
+                    <text
+                      x={textX}
+                      y={textY}
+                      textAnchor="middle"
+                      dominantBaseline="middle"
+                      fontSize="11"
+                      fontWeight="300"
+                      fill={LANGUAGE_COLORS[stat.origin] || LANGUAGE_COLORS.Unknown}
+                      fontFamily="system-ui, -apple-system, sans-serif"
+                    >
+                      {stat.percentage}%
+                    </text>
+                  )}
                 </g>
               )
             })

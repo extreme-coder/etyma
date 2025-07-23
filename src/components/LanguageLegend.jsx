@@ -1,7 +1,7 @@
 import { LANGUAGE_COLORS } from '../constants/languages.js'
 
-const LanguageLegend = ({ activeLanguages, showResults }) => {
-  if (activeLanguages.length === 0) return null
+const LanguageLegend = ({ originStats, showResults }) => {
+  if (originStats.length === 0) return null
 
   return (
     <div style={{ 
@@ -19,8 +19,8 @@ const LanguageLegend = ({ activeLanguages, showResults }) => {
         padding: '20px',
         boxSizing: 'border-box'
       }}>
-        {activeLanguages.map((language) => (
-          <div key={language} style={{
+        {originStats.map((stat) => (
+          <div key={stat.origin} style={{
             display: 'flex',
             alignItems: 'center',
             gap: '12px',
@@ -30,20 +30,35 @@ const LanguageLegend = ({ activeLanguages, showResults }) => {
               style={{ 
                 width: '16px',
                 height: '16px',
-                backgroundColor: LANGUAGE_COLORS[language] || LANGUAGE_COLORS.Unknown,
+                backgroundColor: LANGUAGE_COLORS[stat.origin] || LANGUAGE_COLORS.Unknown,
                 border: '1px solid #d1d5db',
                 flexShrink: 0
               }}
             ></div>
-            <span style={{
-              fontSize: '0.9rem',
-              fontWeight: '400',
-              letterSpacing: '0.05em',
-              color: '#374151',
-              fontFamily: 'system-ui, -apple-system, sans-serif'
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              width: '100%'
             }}>
-              {language}
-            </span>
+              <span style={{
+                fontSize: '0.9rem',
+                fontWeight: '400',
+                letterSpacing: '0.05em',
+                color: '#374151',
+                fontFamily: 'system-ui, -apple-system, sans-serif'
+              }}>
+                {stat.origin}
+              </span>
+              <span style={{
+                fontSize: '0.8rem',
+                fontWeight: '300',
+                color: '#6b7280',
+                fontFamily: 'system-ui, -apple-system, sans-serif'
+              }}>
+                {stat.percentage}%
+              </span>
+            </div>
           </div>
         ))}
       </div>
