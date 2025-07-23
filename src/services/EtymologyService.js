@@ -5,11 +5,18 @@ import {
   INFLECTION_FALLBACK_PATTERNS, 
   AFFIX_ORIGINS 
 } from '../constants/languages.js'
+import etymologyCache from './EtymologyCache.js'
 
 class EtymologyService {
   async fetchEtymology(word, depth = 0) {
     // Prevent infinite recursion
     if (depth > 2) return 'Unknown'
+    
+    // Check cache first
+    const cachedResult = etymologyCache.get(word)
+    if (cachedResult !== null) {
+      return cachedResult
+    }
     
     try {
       // First, try simple morphological analysis for common plurals/inflections
@@ -20,6 +27,7 @@ class EtymologyService {
             const baseWord = singular(match)
             const baseEtymology = await this.fetchEtymology(baseWord, depth + 1)
             if (baseEtymology !== 'Unknown') {
+              etymologyCache.set(word, baseEtymology)
               return baseEtymology // Return the base word's etymology
             }
           }
@@ -65,9 +73,12 @@ class EtymologyService {
         // If no etymology section, check if it's an inflected form
         const inflectionResult = await this.checkInflection(word, depth)
         if (inflectionResult !== 'Unknown') {
+          etymologyCache.set(word, inflectionResult)
           return inflectionResult
         }
-        return 'Unknown'
+        const result = 'Unknown'
+        etymologyCache.set(word, result)
+        return result
       }
       
       // Step 2: Fetch the etymology section content
@@ -77,13 +88,17 @@ class EtymologyService {
       )
       
       if (!etymologyResponse.ok) {
-        return 'Unknown'
+        const result = 'Unknown'
+        etymologyCache.set(word, result)
+        return result
       }
       
       const etymologyData = await etymologyResponse.json()
       
       if (!etymologyData.parse || !etymologyData.parse.text) {
-        return 'Unknown'
+        const result = 'Unknown'
+        etymologyCache.set(word, result)
+        return result
       }
       
       // Step 3: Parse the HTML and extract etymology
@@ -95,6 +110,7 @@ class EtymologyService {
       // Pattern matching for common etymology indicators
       for (const { pattern, origin } of ETYMOLOGY_PATTERNS) {
         if (pattern.test(textContent)) {
+          etymologyCache.set(word, origin)
           return origin
         }
       }
@@ -102,6 +118,7 @@ class EtymologyService {
       // Check for compound words
       const compoundResult = await this.checkCompoundWord(htmlText, textContent, word, depth)
       if (compoundResult) {
+        etymologyCache.set(word, compoundResult)
         return compoundResult
       }
       
@@ -111,17 +128,33 @@ class EtymologyService {
         const linkedWord = seeAlsoMatch[1].toLowerCase()
         // Only follow the link if it's not the same word and not another affix
         if (linkedWord !== word.toLowerCase() && !linkedWord.startsWith('-') && !linkedWord.endsWith('-')) {
-          return await this.fetchEtymology(linkedWord, depth + 1)
+          const result = await this.fetchEtymology(linkedWord, depth + 1)
+          etymologyCache.set(word, result)
+          return result
         }
       }
       
       // Check for language codes in the etymology
-      if (/\bfro\b/.test(textContent) || /Old French/i.test(textContent)) return 'French'
-      if (/\bang\b/.test(textContent) || /Old English/i.test(textContent)) return 'Old English'
-      if (/\bla\b/.test(textContent) || /\blat\b/.test(textContent)) return 'Latin'
-      if (/\bgrc\b/.test(textContent)) return 'Greek'
+      if (/\bfro\b/.test(textContent) || /Old French/i.test(textContent)) {
+        etymologyCache.set(word, 'French')
+        return 'French'
+      }
+      if (/\bang\b/.test(textContent) || /Old English/i.test(textContent)) {
+        etymologyCache.set(word, 'Old English')
+        return 'Old English'
+      }
+      if (/\bla\b/.test(textContent) || /\blat\b/.test(textContent)) {
+        etymologyCache.set(word, 'Latin')
+        return 'Latin'
+      }
+      if (/\bgrc\b/.test(textContent)) {
+        etymologyCache.set(word, 'Greek')
+        return 'Greek'
+      }
       
-      return 'Unknown'
+      const result = 'Unknown'
+      etymologyCache.set(word, result)
+      return result
     } catch (error) {
       console.error('Error fetching etymology for', word, ':', error)
       
@@ -129,10 +162,14 @@ class EtymologyService {
       if (error.message === 'NETWORK_ERROR' || 
           error.name === 'TypeError' || // Often indicates network issues
           error.message.includes('fetch')) {
-        return 'Network Error'
+        const result = 'Network Error'
+        // Don't cache network errors - they should be retried
+        return result
       }
       
-      return 'Unknown'
+      const result = 'Unknown'
+      etymologyCache.set(word, result)
+      return result
     }
   }
 

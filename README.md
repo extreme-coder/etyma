@@ -2,7 +2,7 @@
 
 **Illuminating Word Origins**
 
-A minimalist web app that reveals the etymological origins of English words by coloring them according to their linguistic heritage.
+A minimalist web app that reveals the etymological origins of English words by coloring them according to their linguistic heritage. Inspired by Gideon Ben-Ami's video (https://www.youtube.com/watch?v=_W5r6jYZdTA).
 
 ## Features
 
@@ -13,6 +13,7 @@ A minimalist web app that reveals the etymological origins of English words by c
 - **Distribution Chart** - Pie chart visualization of etymological composition
 - **Responsive Design** - Clean, modern interface that works on all devices
 - **Smooth Animations** - Elegant fade-in transitions and scroll behavior
+- **Smart Caching** - Local storage caches etymology lookups to reduce API calls (daily refresh)
 
 ## Language Origins Detected
 
