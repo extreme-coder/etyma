@@ -56,7 +56,7 @@ The app intelligently handles:
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/etyma.git
+git clone https://github.com/extreme-coder/etyma.git
 cd etyma
 
 # Install dependencies
